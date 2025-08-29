@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.scss';
-import { GoodsList } from './GoodsList';
+import GoodsList from './GoodsList';
 
 import { getAll, get5First, getRedGoods } from './api/goods';
 import { Good } from './types/Good';
@@ -9,6 +9,7 @@ import { Good } from './types/Good';
 
 export const App: React.FC = () => {
   const [goods, setGoods] = useState<Good[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <div className="App">
@@ -17,7 +18,7 @@ export const App: React.FC = () => {
       <button
         type="button"
         data-cy="all-button"
-        onClick={() => getAll().then(setGoods)}
+        onClick={() => getAll().then(setGoods).catch((e) => setError((e as Error).message))}
       >
         Load all goods
       </button>
@@ -39,6 +40,9 @@ export const App: React.FC = () => {
       </button>
 
       <GoodsList goods={goods} />
+      {error && (
+        <div className="notification is-danger">{error}</div>
+      )}
     </div>
   );
 };
